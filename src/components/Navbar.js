@@ -1,7 +1,13 @@
-// // src/components/Navbar.js
+// "use client";
+
 // import Link from "next/link";
+// import { usePathname, useRouter } from "next/navigation";
 
 // const Navbar = () => {
+//   const pathname = usePathname(); // Get the current path
+//   const router = useRouter();
+//   const isDashboard = pathname.startsWith("/dashboard"); // Check if user is on dashboard pages
+
 //   return (
 //     <nav className="navbar">
 //       <div className="nav-container">
@@ -15,14 +21,45 @@
 //           <Link href="/search" className="nav-item">
 //             SEARCH
 //           </Link>
-//           <div className="register-container">
-//             <Link href="/register" className="register-btn">
-//               Register
-//             </Link>
-//             <Link href="/login" className="register-btn">
-//               Login
-//             </Link>
-//           </div>
+
+//           {/* Show MY BOOKINGS and PROFILE only when in Dashboard */}
+//           {isDashboard && (
+//             <>
+//               <Link href="/dashboard/my-bookings" className="nav-item">
+//                 MY BOOKINGS
+//               </Link>
+//               <Link href="/dashboard/profile" className="nav-item">
+//                 PROFILE
+//               </Link>
+//               <div className="register-button">
+//                 <button
+//                   onClick={() => router.push("/")}
+//                   className="register-link"
+//                 >
+//                   LOGOUT
+//                 </button>
+//               </div>
+//             </>
+//           )}
+
+//           {/* Always show Register/Login buttons */}
+//           {!isDashboard && (
+//             <div className="register-button">
+//               <button
+//                 onClick={() => router.push("/auth/register")}
+//                 className="register-link"
+//               >
+//                 Register
+//               </button>
+//               <span className="divider">|</span>
+//               <button
+//                 onClick={() => router.push("/auth/login")}
+//                 className="register-link"
+//               >
+//                 Login
+//               </button>
+//             </div>
+//           )}
 //         </div>
 //       </div>
 //     </nav>
@@ -30,10 +67,17 @@
 // };
 
 // export default Navbar;
-// src/components/Navbar.js
+
+"use client";
+
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const pathname = usePathname(); // Get the current path
+  const router = useRouter();
+  const isDashboard = pathname.startsWith("/dashboard"); // Check if user is on dashboard pages
+
   return (
     <nav className="navbar">
       <div className="nav-container">
@@ -44,18 +88,53 @@ const Navbar = () => {
           <Link href="/" className="nav-item">
             HOME
           </Link>
-          <Link href="/search" className="nav-item">
+
+          {/* Check if user is in dashboard, use dashboard search */}
+          <Link
+            href={isDashboard ? "/dashboard/search" : "/search"} // ✅ Fixed
+            className="nav-item"
+          >
             SEARCH
           </Link>
-          <div className="register-button">
-            <Link href="/register" className="register-link">
-              Register
-            </Link>
-            <span className="divider">|</span>
-            <Link href="/login" className="register-link">
-              Login
-            </Link>
-          </div>
+
+          {/* Show MY BOOKINGS and PROFILE only when in Dashboard */}
+          {isDashboard && (
+            <>
+              <Link href="/dashboard/my-bookings" className="nav-item">
+                MY BOOKINGS
+              </Link>
+              <Link href="/dashboard/profile" className="nav-item">
+                PROFILE
+              </Link>
+              <div className="register-button">
+                <button
+                  onClick={() => router.push("/")}
+                  className="register-link"
+                >
+                  LOGOUT
+                </button>
+              </div>
+            </>
+          )}
+
+          {/* Always show Register/Login buttons */}
+          {!isDashboard && (
+            <div className="register-button">
+              <button
+                onClick={() => router.push("/auth/register")}
+                className="register-link"
+              >
+                Register
+              </button>
+              <span className="divider">|</span>
+              <button
+                onClick={() => router.push("/auth/login")}
+                className="register-link"
+              >
+                Login
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>

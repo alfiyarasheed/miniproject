@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "firebase": "^11.4.0",
+    "lucide-react": "^0.483.0",
     "module-alias": "^2.2.3",
     "next": "15.2.1",
     "react": "^19.0.0",
