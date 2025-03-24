@@ -85,7 +85,7 @@ const Navbar = () => {
           VenueEase
         </Link>
         <div className="nav-links">
-          <Link href="/" className="nav-item">
+          <Link href={isDashboard ? "/dashboard" : "/"} className="nav-item">
             HOME
           </Link>
 
@@ -96,7 +96,6 @@ const Navbar = () => {
           >
             SEARCH
           </Link>
-
           {/* Show MY BOOKINGS and PROFILE only when in Dashboard */}
           {isDashboard && (
             <>
@@ -116,7 +115,6 @@ const Navbar = () => {
               </div>
             </>
           )}
-
           {/* Always show Register/Login buttons */}
           {!isDashboard && (
             <div className="register-button">
