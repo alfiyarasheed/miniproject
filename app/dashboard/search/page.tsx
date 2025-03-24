@@ -109,11 +109,18 @@ export default function SearchPage() {
 
 
                                     <p><strong>Rating:</strong> <span className="venue-data">⭐ {venue.rating}</span></p>
-                                    <Link href={`/venue/${venue.id}?date=${date}`}>
+                                    {/* <Link href={`/venue/${venue.id}?date=${date}`}>
+                                        <button className="book-now-btn">
+                                            Book Now
+                                        </button>
+                                    </Link> */}
+
+                                    <Link href={`/dashboard/venue/${venue.id}?date=${date}`}>
                                         <button className="book-now-btn">
                                             Book Now
                                         </button>
                                     </Link>
+
                                 </div>
                             ))}
                         </div>
