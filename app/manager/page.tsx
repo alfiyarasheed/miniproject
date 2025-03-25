@@ -426,3 +426,207 @@ export default function ManagerDashboard() {
         </div >
     );
 }
+
+
+// "use client"
+// import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// import { Button } from "@/components/ui/button";
+// import { Table, TableHeader, TableBody, TableRow, TableCell } from "@/components/ui/table";
+// import { BarChart, Users, Calendar, Building2, Star } from "lucide-react";
+// import { useRouter } from "next/navigation";
+// import AdminNavbar from "@/components/AdminNavbar";
+// import { db } from "@/firebase";
+// import { collection, addDoc, deleteDoc, doc, updateDoc, getDocs } from "firebase/firestore";
+
+// // Define types
+// interface Venue {
+//     id: string;
+//     name: string;
+//     location: string;
+//     price: string;
+//     capacity: string;
+//     image?: string;
+// }
+
+// const ManagerDashboard = () => {
+//     const [activeTab, setActiveTab] = useState("dashboard");
+//     const [venues, setVenues] = useState<Venue[]>([]);
+//     const [showAction, setShowAction] = useState<"add" | "remove" | "edit" | null>(null);
+//     const [formData, setFormData] = useState({
+//         name: "",
+//         location: "",
+//         price: "",
+//         capacity: "",
+//         image: "",
+//     });
+//     const [editVenue, setEditVenue] = useState<Venue | null>(null);
+//     const router = useRouter();
+
+//     // Fetch venues from Firestore
+//     useEffect(() => {
+//         const fetchVenues = async () => {
+//             const venueSnapshot = await getDocs(collection(db, "venues"));
+//             const venueList = venueSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Venue));
+//             setVenues(venueList);
+//         };
+//         fetchVenues();
+//     }, []);
+
+//     // Handle input changes for Add/Edit Venue form
+//     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+//         const { name, value } = e.target;
+//         setFormData({ ...formData, [name]: value });
+//     };
+
+//     // Handle Add Venue
+//     const handleAddVenue = async (e: FormEvent<HTMLFormElement>) => {
+//         e.preventDefault();
+//         try {
+//             const docRef = await addDoc(collection(db, "venues"), formData);
+//             setVenues([...venues, { id: docRef.id, ...formData }]);
+//             alert("Venue added successfully!");
+//             setFormData({ name: "", location: "", price: "", capacity: "", image: "" });
+//         } catch (error) {
+//             console.error("Error adding venue: ", error);
+//         }
+//     };
+
+//     // Handle Remove Venue
+//     const handleRemoveVenue = async (id: string) => {
+//         try {
+//             await deleteDoc(doc(db, "venues", id));
+//             setVenues(venues.filter((venue) => venue.id !== id));
+//             alert("Venue removed successfully!");
+//         } catch (error) {
+//             console.error("Error removing venue: ", error);
+//         }
+//     };
+
+//     // Handle Edit Venue Click
+//     const handleEditClick = (venue: Venue) => {
+//         setEditVenue(venue);
+//         setShowAction("edit");
+//         setFormData({
+//             name: venue.name,
+//             location: venue.location,
+//             price: venue.price,
+//             capacity: venue.capacity,
+//             image: venue.image || "",
+//         });
+//     };
+
+//     // Handle Update Venue
+//     const handleUpdateVenue = async (e: FormEvent<HTMLFormElement>) => {
+//         e.preventDefault();
+//         if (editVenue) {
+//             try {
+//                 await updateDoc(doc(db, "venues", editVenue.id), formData);
+//                 setVenues(venues.map((v) => (v.id === editVenue.id ? { ...formData, id: v.id } : v)));
+//                 alert("Venue updated successfully!");
+//                 setEditVenue(null);
+//                 setShowAction(null);
+//             } catch (error) {
+//                 console.error("Error updating venue: ", error);
+//             }
+//         }
+//     };
+
+//     return (
+//         <div className="admin-dashboard">
+//             <AdminNavbar />
+//             <aside className="sidebar">
+//                 <Button onClick={() => setActiveTab("dashboard")} className={activeTab === "dashboard" ? "active" : ""}>
+//                     <BarChart /> Dashboard
+//                 </Button>
+//                 <Button onClick={() => setActiveTab("manageVenue")} className={activeTab === "manageVenue" ? "active" : ""}>
+//                     <Building2 /> Manage Venue
+//                 </Button>
+//                 <Button onClick={() => setActiveTab("slots")} className={activeTab === "slots" ? "active" : ""}>
+//                     <Calendar /> Manage Time Slots
+//                 </Button>
+//                 <Button onClick={() => setActiveTab("reviews")} className={activeTab === "reviews" ? "active" : ""}>
+//                     <Star /> View Reviews
+//                 </Button>
+//                 <Button onClick={() => setActiveTab("bookings")} className={activeTab === "bookings" ? "active" : ""}>
+//                     <Users /> View Bookings
+//                 </Button>
+//                 <Button onClick={() => router.push("/")} className="logout-button">
+//                     Logout
+//                 </Button>
+//             </aside>
+
+//             <main className="content">
+//                 {activeTab === "dashboard" && (
+//                     <Card>
+//                         <CardHeader>
+//                             <CardTitle>Manager Dashboard</CardTitle>
+//                         </CardHeader>
+//                         <CardContent>
+//                             <p>Welcome to the manager panel! Manage venues, time slots, bookings, and reviews.</p>
+//                         </CardContent>
+//                     </Card>
+//                 )}
+//                 {activeTab === "manageVenue" && (
+//                     <Card>
+//                         <CardHeader>
+//                             <CardTitle>Manage Venue</CardTitle>
+//                         </CardHeader>
+//                         <CardContent>
+//                             <div className="button-group mb-4">
+//                                 <Button onClick={() => setShowAction("add")} className="btn-add">
+//                                     Add Venue
+//                                 </Button>
+//                             </div>
+//                             {showAction === "add" && (
+//                                 <form onSubmit={handleAddVenue} className="venue-form space-y-4">
+//                                     <label>Venue Name</label>
+//                                     <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+//                                     <label>Location</label>
+//                                     <input type="text" name="location" value={formData.location} onChange={handleChange} required />
+//                                     <label>Price Per Hour</label>
+//                                     <input type="text" name="price" value={formData.price} onChange={handleChange} required />
+//                                     <label>Capacity</label>
+//                                     <input type="text" name="capacity" value={formData.capacity} onChange={handleChange} required />
+//                                     <label>Venue Image</label>
+//                                     <input type="text" name="image" value={formData.image} onChange={handleChange} />
+//                                     <Button type="submit">Add Venue</Button>
+//                                 </form>
+//                             )}
+//                             {venues.map((venue) => (
+//                                 <div key={venue.id} className="venue-item">
+//                                     <p>
+//                                         {venue.name} - {venue.location}
+//                                     </p>
+//                                     <Button onClick={() => handleRemoveVenue(venue.id)} className="btn-remove">
+//                                         Remove
+//                                     </Button>
+//                                     <Button onClick={() => handleEditClick(venue)} className="btn-edit">
+//                                         Edit
+//                                     </Button>
+//                                 </div>
+//                             ))}
+//                             {showAction === "edit" && (
+//                                 <form onSubmit={handleUpdateVenue} className="venue-form space-y-4">
+//                                     <label>Venue Name</label>
+//                                     <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+//                                     <label>Location</label>
+//                                     <input type="text" name="location" value={formData.location} onChange={handleChange} required />
+//                                     <label>Price Per Hour</label>
+//                                     <input type="text" name="price" value={formData.price} onChange={handleChange} required />
+//                                     <label>Capacity</label>
+//                                     <input type="text" name="capacity" value={formData.capacity} onChange={handleChange} required />
+//                                     <label>Venue Image</label>
+//                                     <input type="text" name="image" value={formData.image} onChange={handleChange} />
+//                                     <Button type="submit">Update Venue</Button>
+//                                 </form>
+//                             )}
+//                         </CardContent>
+//                     </Card>
+//                 )}
+//             </main>
+//         </div>
+//     );
+// };
+
+// export default ManagerDashboard;
