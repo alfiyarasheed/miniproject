@@ -1,15 +1,17 @@
 
 "use client";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
 import AdminNavbar from "@/components/AdminNavbar";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/firebase";
 
 // Define types
 interface Venue {
-    id: number;
+    id: string;
     name: string;
     location: string;
     price: string;
@@ -36,18 +38,19 @@ interface Booking {
     id: number;
     venue: string;
     date: string;
-    slot: string;
+    timeSlots: [];
 }
 
 // Mock Data
 const mockVenues: Venue[] = [
-    { id: 1, name: "Grand Hall", location: "City Center", price: "₹2000/hr", capacity: "500" },
-    { id: 2, name: "Skyline Auditorium", location: "Downtown", price: "₹3000/hr", capacity: "800" },
+    { id: "1", name: "Sunset Banquet", location: "Los Angeles", price: "$500 per hour", capacity: "500" },
+
 ];
 
 const mockTimeSlots: TimeSlot[] = [
-    { id: 1, venue: "Grand Hall", date: "2025-04-01", slot: "10 am - 12 pm" },
-    { id: 2, venue: "Skyline Auditorium", date: "2025-04-02", slot: "2 pm - 5 pm" },
+    { id: 1, venue: "Sunset Banquet", date: "2025-03-10", slot: "12 am - 4 pm" },
+    { id: 2, venue: "Sunset Banquet", date: "2025-03-10", slot: "10 am - 12 pm" }
+
 ];
 
 const mockReviews: Review[] = [
@@ -55,19 +58,15 @@ const mockReviews: Review[] = [
     { id: 2, venue: "Grand Hall", user: "Jane Smith", comment: "Good venue, but a bit pricey.", rating: 4.0 },
 ];
 
-const mockBookings: Booking[] = [
-    { id: 1, venue: "Banquet Room", date: "2025-04-01", slot: "2 pm - 8 pm" },
-    { id: 2, venue: "Grand Hall", date: "2025-03-15", slot: "10 am - 2 pm" },
-];
 
 export default function ManagerDashboard() {
     const [activeTab, setActiveTab] = useState("dashboard");
     const [venues, setVenues] = useState<Venue[]>(mockVenues);
     const [timeSlots, setTimeSlots] = useState<TimeSlot[]>(mockTimeSlots);
     const [reviews] = useState<Review[]>(mockReviews);
-    const [bookings] = useState<Booking[]>(mockBookings);
+    const [bookings, setBooking] = useState<Booking[]>([]);
     const [formData, setFormData] = useState<Venue>({
-        id: 0,
+        id: "0",
         name: "",
         location: "",
         price: "",
@@ -84,6 +83,23 @@ export default function ManagerDashboard() {
     });
 
     const router = useRouter();
+    useEffect(() => {
+        const bk = localStorage.getItem("booked");
+        //console.log(bk)
+        const mockBookings = JSON.parse(bk || "[]") as Booking;
+        console.log(mockBookings)
+        setBooking([mockBookings]);
+        console.log(bookings)
+        async function getData() {
+            const vdata = (await getDocs(collection(db, "reviews"))).docs;
+
+            const dt = vdata.map((doc) => {
+                return { id: doc.id, ...doc.data() } as Venue;
+            })
+            setVenues(dt);
+        }
+        getData();
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("authToken");
@@ -107,14 +123,14 @@ export default function ManagerDashboard() {
     // Handle Add Venue
     const handleAddVenue = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const newVenue = { id: venues.length + 1, ...formData };
+        const newVenue = { ...formData, id: `${venues.length + 1}` };
         setVenues([...venues, newVenue]);
         alert("Venue added successfully!");
-        setFormData({ id: 0, name: "", location: "", price: "", capacity: "", image: "" });
+        setFormData({ id: "0", name: "", location: "", price: "", capacity: "", image: "" });
     };
 
     // Handle Remove Venue
-    const handleRemoveVenue = (id: number) => {
+    const handleRemoveVenue = (id: string) => {
         setVenues(venues.filter((venue) => venue.id !== id));
         alert("Venue removed successfully!");
     };
@@ -414,7 +430,7 @@ export default function ManagerDashboard() {
                                         <TableRow key={booking.id}>
                                             <TableCell>{booking.venue}</TableCell>
                                             <TableCell>{booking.date}</TableCell>
-                                            <TableCell>{booking.slot}</TableCell>
+                                            <TableCell>{booking.timeSlots}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

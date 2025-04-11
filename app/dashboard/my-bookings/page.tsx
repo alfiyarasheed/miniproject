@@ -256,40 +256,20 @@ interface Booking {
     id: number;
     venue: string;
     date: string;
-    timeSlot: string;
+    timeSlots: string[];
     status: string;
 }
 
 // Dummy mock data for past and current bookings
-const mockBookings: Booking[] = [
+let mockBookings: Booking[] = [
     {
         id: 1,
-        venue: "Grand Palace Hall",
-        date: "2025-03-10",
-        timeSlot: "3:00 PM - 6:00 PM",
-        status: "Upcoming",
-    },
-    {
-        id: 2,
         venue: "Sunset Banquet",
-        date: "2025-02-12",
-        timeSlot: "12:00 PM - 4:00 PM",
-        status: "Completed",
+        date: "2025-03-10",
+        timeSlots: ["12.00 AM - 4:00 PM"],
+        status: "completed",
     },
-    {
-        id: 3,
-        venue: "City View Hall",
-        date: "2025-04-15",
-        timeSlot: "1:00 PM - 5:00 PM",
-        status: "Upcoming",
-    },
-    {
-        id: 4,
-        venue: "Ocean Breeze Hall",
-        date: "2025-01-05",
-        timeSlot: "10:00 AM - 1:00 PM",
-        status: "Completed",
-    },
+
 ];
 
 const MyBookings = () => {
@@ -298,6 +278,11 @@ const MyBookings = () => {
 
     useEffect(() => {
         // Get today's date correctly formatted
+        const bk = localStorage.getItem("booked");
+        //console.log(bk)
+        const mockBooking = JSON.parse(bk || "[]") as Booking;
+        console.log(mockBooking)
+        mockBookings = [mockBooking]
         const today = new Date().toISOString().split("T")[0];
 
         // ✅ Correctly filter upcoming and past bookings
@@ -315,6 +300,7 @@ const MyBookings = () => {
 
         setCurrentBookings(upcoming);
         setPastBookings(past);
+
     }, []);
 
     return (
@@ -332,7 +318,7 @@ const MyBookings = () => {
                                 <div key={booking.id} className="booking-card">
                                     <h3 className="font-bold">{booking.venue}</h3>
                                     <p>Date: {booking.date}</p>
-                                    <p>Time Slot: {booking.timeSlot}</p>
+                                    <p>Time Slot: {booking.timeSlots}</p>
                                     <p>Status: 🟢 Upcoming</p>
                                 </div>
                             ))}
@@ -351,7 +337,7 @@ const MyBookings = () => {
                                 <div key={booking.id} className="booking-card">
                                     <h3 className="font-bold">{booking.venue}</h3>
                                     <p>Date: {booking.date}</p>
-                                    <p>Time Slot: {booking.timeSlot}</p>
+                                    <p>Time Slot: {booking.timeSlots}</p>
                                     <p>Status: 🔴 Completed</p>
                                 </div>
                             ))}

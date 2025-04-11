@@ -7,6 +7,8 @@ const BookingForm = ({ venue, selectedDate, closeForm }) => {
     guests: "",
     date: selectedDate || "",
     timeSlots: [],
+    venue: venue.name,
+    id: venue.id,
   });
 
   const [errors, setErrors] = useState({
@@ -77,7 +79,9 @@ const BookingForm = ({ venue, selectedDate, closeForm }) => {
     }
 
     console.log("Booking Submitted:", formData);
-    alert("Booking confirmed! A confirmation email has been sent.");
+
+    localStorage.setItem("booked", JSON.stringify(formData));
+    alert("Booking confirmed!.");
     closeForm();
   };
 

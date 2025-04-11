@@ -109,19 +109,21 @@ const LoginForm: React.FC = () => {
             );
             const user = userCredential.user;
 
-            // Get user role from Firestore
-            const userDoc = await getDoc(doc(db, "users", user.uid));
+            // Correctly get user role from Firestore
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
 
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
                 if (userData.role === "manager") {
-                    router.push("/manager"); // Redirect to manager dashboard
+                    router.push("/dashboard/manager"); // Redirect to manager dashboard
+                } else if (userData.role === "admin") {
+                    router.push("/dashboard/admin"); // Redirect to admin dashboard
                 } else {
                     router.push("/dashboard/user"); // Redirect to user dashboard
                 }
             } else {
-                console.error("No such user found!");
-                alert("Error fetching user data.");
+                alert("No such user found in the database.");
             }
         } catch (error) {
             console.error("Login error:", error);

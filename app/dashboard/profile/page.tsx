@@ -19,14 +19,13 @@ import React, { useState } from "react";
 interface UserData {
     name: string;
     email: string;
-    phone: string;
 }
 
 // Dummy user data for now (can be replaced with API data later)
 const initialUserData: UserData = {
-    name: "John Doe",
-    email: "johndoe@example.com",
-    phone: "+1 987 654 3210",
+    name: "MahinSala",
+    email: "mahinsala123456789@gmail.com",
+
 };
 
 const Profile = () => {
@@ -34,9 +33,9 @@ const Profile = () => {
     const [userData] = useState<UserData>(initialUserData);
 
     // Placeholder function for Edit button
-    const handleEdit = () => {
-        alert("Edit functionality will be implemented later!");
-    };
+    // const handleEdit = () => {
+    //     alert("Edit functionality will be implemented later!");
+    // };
 
     return (
         <div className="profile-container">
@@ -51,15 +50,15 @@ const Profile = () => {
                 <div className="detail">
                     <strong>Email:</strong> {userData.email}
                 </div>
-                <div className="detail">
+                {/* <div className="detail">
                     <strong>Phone:</strong> {userData.phone}
-                </div>
+                </div> */}
             </div>
 
             {/* Edit Button */}
-            <button className="edit-btn" onClick={handleEdit}>
+            {/* <button className="edit-btn" onClick={handleEdit}>
                 Edit
-            </button>
+            </button> */}
         </div>
     );
 };
